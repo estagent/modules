@@ -106,8 +106,6 @@ export default function (...args) {
                         2000,
                     )
 
-                    defaults = cloneDeep(this.data())
-
                     const onSuccess = options.onSuccess ? options.onSuccess(response) : null
 
                     defaults = cloneDeep(this.data())
