@@ -110,7 +110,7 @@ export default function (...args) {
 
                     defaults = cloneDeep(this.data())
                     this.isDirty = false
-                    return onSuccess
+                    return options.onSuccess ? onSuccess : response
 
                 })
                 .catch(error => {
@@ -133,7 +133,7 @@ export default function (...args) {
                     }
                     if (options.onError) {
                         return options.onError(this.errors)
-                    }
+                    } else throw error;
                 })
         },
     })
