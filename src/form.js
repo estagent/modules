@@ -1,12 +1,10 @@
 import cloneDeep from 'lodash.clonedeep'
-import isEqual from 'lodash.isequal'
 import {request} from '@revgaming/session'
-import {reactive, watch} from 'vue'
+import {reactive} from 'vue'
 
 export default function (...args) {
     const data = (typeof args[0] === 'string' ? args[1] : args[0]) || {}
     let defaults = cloneDeep(data)
-    let cancelToken = null
     let recentlySuccessfulTimeoutId = null
     let transform = data => data
 
@@ -77,11 +75,6 @@ export default function (...args) {
         delete(url, options) {
             return this.submit('delete', url, options)
         },
-        cancel() {
-            if (cancelToken) {
-                cancelToken.cancel()
-            }
-        },
         submit(method, url, options = {}) {
             const data = transform(this.data())
             const _options = {
@@ -119,6 +112,7 @@ export default function (...args) {
                     this.hasErrors = true
 
                     if (error.response && error.response.data) {
+
                         const data = error.response.data
 
                         if (data.errors) {
@@ -130,17 +124,17 @@ export default function (...args) {
                         if (data.message) {
                             this.errors.message = data.message
                         }
+
+                        if (data.error) {
+                            this.errors.message = data.message
+                        }
+
                     }
                     if (options.onError) {
                         return options.onError(this.errors)
-                    } else throw error;
+                    } else throw error
                 })
         },
     })
-
-    watch(form, newValue => {
-        form.isDirty = !isEqual(form.data(), defaults)
-    }, {immediate: true, deep: true})
-
-    return form;
+    return form.reset()
 }
