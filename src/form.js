@@ -112,24 +112,27 @@ export default function (...args) {
                     this.hasErrors = true
 
                     if (error.response && error.response.data) {
-
                         const data = error.response.data
 
-                        if (data.errors) {
-                            for (const key in data.errors) {
-                                this.errors[key] = data.errors[key][0]
+                        if (error.response.status === 422) {
+                            if (data.errors) {
+                                for (const key in data.errors) {
+                                    this.errors[key] = data.errors[key][0]
+                                }
+                            } else {
+                                for (const key in data) {
+                                    this.errors[key] = data[key][0]
+                                }
+                            }
+                        } else {
+                            if (data.message) {
+                                this.errors.message = data.message
+                            } else if (data.error) {
+                                this.errors.message = data.error
                             }
                         }
+                    } else this.errors.message = __('messages.failed')
 
-                        if (data.message) {
-                            this.errors.message = data.message
-                        }
-
-                        if (data.error) {
-                            this.errors.message = data.message
-                        }
-
-                    }
                     if (options.onError) {
                         return options.onError(this.errors)
                     } else throw error
