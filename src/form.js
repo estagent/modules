@@ -2,7 +2,7 @@ import cloneDeep from 'lodash.clonedeep'
 import {request} from '@revgaming/session'
 import {reactive} from 'vue'
 
-export default function (...args) {
+export default function(...args) {
     const data = (typeof args[0] === 'string' ? args[1] : args[0]) || {}
     let defaults = cloneDeep(data)
     let recentlySuccessfulTimeoutId = null
@@ -12,6 +12,7 @@ export default function (...args) {
         // return {
         isDirty: false,
         hasErrors: false,
+        hasMessages: false,
         processing: false,
         progress: null,
         wasSuccessful: false,
@@ -23,6 +24,7 @@ export default function (...args) {
             }, {})
         },
         errors: {},
+        messages: {},
         transform(callback) {
             transform = callback
             return this
@@ -60,6 +62,17 @@ export default function (...args) {
 
             return this
         },
+        clearMessages() {
+            this.messages = Object.keys(this.messages).reduce(
+                (carry, field) => ({
+                    ...carry,
+                    ...{},
+                }),
+                {},
+            )
+            this.hasMessages = false
+            return this
+        },
         get(url, options) {
             return this.submit('get', url, options)
         },
@@ -87,6 +100,7 @@ export default function (...args) {
 
             this.processing = true
             this.clearErrors()
+            this.clearMessages()
 
             return request[method](url, data, _options)
                 .then(response => {
@@ -99,12 +113,18 @@ export default function (...args) {
                         2000,
                     )
 
-                    const onSuccess = options.onSuccess ? options.onSuccess(response) : null
+                    if (response.success) this.messages.success = response.success
+                    if (response.warning) this.messages.warning = response.warning
+                    if (response.info) this.messages.info = response.warning
+                    this.hasMessages = Object.keys(this.messages).length > 0
+
+                    const onSuccess = options.onSuccess
+                        ? options.onSuccess(response)
+                        : null
 
                     defaults = cloneDeep(this.data())
                     this.isDirty = false
                     return options.onSuccess ? onSuccess : response
-
                 })
                 .catch(error => {
                     this.processing = false
@@ -124,16 +144,16 @@ export default function (...args) {
                                     this.errors[key] = data[key][0]
                                 }
                             }
-
                         } else {
                             if (data.message) {
-                                this.errors.message = data.message
+                                this.messages.error = data.message
                             } else if (data.error) {
-                                this.errors.message = data.error
-                            } else this.errors.message = __('messages.failed')
+                                this.messages.error = data.error
+                            } else this.messages.error = __('messages.failed')
                         }
+                    } else this.messages.error = __('messages.failed')
 
-                    } else this.errors.message = __('messages.failed')
+                    this.hasMessages = Object.keys(this.messages).length > 0
 
                     if (options.onError) {
                         return options.onError(this.errors)
