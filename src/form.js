@@ -124,13 +124,15 @@ export default function (...args) {
                                     this.errors[key] = data[key][0]
                                 }
                             }
+
                         } else {
                             if (data.message) {
                                 this.errors.message = data.message
                             } else if (data.error) {
                                 this.errors.message = data.error
-                            }
+                            } else this.errors.message = __('messages.failed')
                         }
+
                     } else this.errors.message = __('messages.failed')
 
                     if (options.onError) {
