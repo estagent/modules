@@ -14,7 +14,7 @@ export default (error) => {
           errors[key] = data[key]
         }
       }
-    } else {<
+    } else {
       if (data.message) {
         errors.message = [data.message]
       } else if (data.error) {
