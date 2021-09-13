@@ -24,7 +24,13 @@ export default (error) => {
       else
         errors.message = [__('messages.failed')]
     }
-  } else errors.message = ['unknown error']
+  } else {
+    console.error(error)
+    if (!errors.response)
+      errors.message = [__('messages.requestTimeOut')]
+    else
+      errors.message = [__('messages.unknown_error')]
+  }
 
   return {
     all: () => errors,
