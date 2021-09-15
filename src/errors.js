@@ -1,10 +1,12 @@
+import {StatusCodes} from 'http-status-codes'
+
 export default (error) => {
   const errors = {}
   if (error.response && error.response.data) {
 
     const data = error.response.data
 
-    if (error.response.status === 422) {
+    if (error.response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
       if (data.errors) {
         for (const key in data.errors) {
           errors[key] = data.errors[key]
@@ -28,8 +30,9 @@ export default (error) => {
     console.error(error)
     if (!errors.response)
       errors.message = [__('messages.requestTimeOut')]
-    else
-      errors.message = [__('messages.unknown_error')]
+    else if (typeof error == 'string')
+      errors.message = [error]
+    else errors.message = [__('messages.unknown_error')]
   }
 
   return {

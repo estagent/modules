@@ -1,6 +1,6 @@
 {
   "name": "@revgaming/modules",
-  "version": "5.3.6",
+  "version": "5.3.7",
   "author": "estagent <estagent@gmail.com>",
   "description": "modules module for frontend",
   "keywords": [
@@ -12,8 +12,9 @@
   "homepage": "https://github.com/estagent/modules",
   "main": "src/index.js",
   "dependencies": {
-    "@revgaming/session": "5.x",
     "@revgaming/preference": "5.x",
+    "@revgaming/session": "5.x",
+    "http-status-codes": "^2.1.4",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
     "vue": "^3.x"
