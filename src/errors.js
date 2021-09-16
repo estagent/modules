@@ -1,4 +1,4 @@
-import {StatusCodes} from 'http-status-codes'
+import statusCodes from './StatusCodes'
 
 export default (error) => {
   const errors = {}
@@ -6,7 +6,7 @@ export default (error) => {
 
     const data = error.response.data
 
-    if (error.response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
+    if (error.response.status === statusCodes.UNPROCESSABLE_ENTITY) {
       if (data.errors) {
         for (const key in data.errors) {
           errors[key] = data.errors[key]
