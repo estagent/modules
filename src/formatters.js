@@ -9,9 +9,9 @@ export default {
       maximumFractionDigits: decimals,
     })
   },
-  formatDate(date) {
+  formatDate: (date) =>  {
     if (!date)
-      return ''
+      return '-'
     if (!(date instanceof Date))
       date = new Date(date)
     return date
@@ -19,11 +19,12 @@ export default {
         day: '2-digit', // numeric, 2-digit
         year: 'numeric', // numeric, 2-digit
         month: '2-digit', // numeric, 2-digit, long, short, narrow
+        timeZone: Preference.timezone(),
       })
   },
-  formatTime(date) {
+  formatTime: (date) =>  {
     if (!date)
-      return ''
+      return '-'
     if (!(date instanceof Date))
       date = new Date(date)
     return date
@@ -34,6 +35,7 @@ export default {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
+        timeZone:  Preference.timezone(),
       })
   },
 }
